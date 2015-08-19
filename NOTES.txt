@@ -1,0 +1,40 @@
+Entire Scheme program is represented as a single Python function with a single
+local variable: "S", the stack.  The stack is represented as a list, using
+'append' and 'pop' as appropriate.  So, the Python stack is very predictable
+and only used temporarily.
+
+Function values are represented as tuples (idx, closure) where idx is the
+index of the function.
+
+** consider just storing S on the bottom of the Python stack
+
+Each execution frame is represented as a list, and pushed on the stack
+ 0: parent frame
+ 1: local variables
+
+####
+
+PROBLEMS with single-func:
+
+ - Python has no indirect jump operation; we would rely on a linear search
+   with optimizations for known function names
+
+ - LOTS of Python instructions for each scheme operation, since pushing is so
+   hard
+
+ - misses lots of benefits from Python runtime (variables, closures, etc.)
+
+PROBLEMS with multi-func:
+
+ - May violate Python's stack restrictions?
+
+ - Can't optimize tail recursion
+
+ - Call semantics are different (reversed)
+
+####
+
+disassemble python file:
+
+python -c 'import sys, dis, compiler; f = sys.argv[1]; dis.disassemble(compiler.compile(open(f).read(), f, "exec"))' foo.py
+
